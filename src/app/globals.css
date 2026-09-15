@@ -1,26 +1,282 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Dark mode is live, driven by a `.dark` class that `next-themes` puts on
+ * <html>. Bound to the class rather than to `prefers-color-scheme` on purpose,
+ * so the switcher can override the device setting.
+ */
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-on-photo: var(--on-photo);
+  --color-photo-ink: var(--photo-ink);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-sans);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /*
+   * A soft elevation scale. Restored when glasscn was adopted: its glass
+   * variants are built out of layered shadows — the bevel, the inset highlight
+   * and the floating halo are the effect itself, not decoration on top of it.
+   */
+  --shadow-2xs: 0 1px 1px 0 rgb(33 37 41 / 0.03);
+  --shadow-xs: 0 1px 2px 0 rgb(33 37 41 / 0.04);
+  --shadow-sm: 0 1px 3px 0 rgb(33 37 41 / 0.06), 0 1px 2px -1px rgb(33 37 41 / 0.04);
+  --shadow-md: 0 4px 12px -2px rgb(33 37 41 / 0.08), 0 2px 4px -2px rgb(33 37 41 / 0.04);
+  --shadow-lg: 0 12px 28px -8px rgb(33 37 41 / 0.12), 0 4px 8px -4px rgb(33 37 41 / 0.06);
+  --shadow-xl: 0 24px 48px -12px rgb(33 37 41 / 0.16), 0 8px 16px -8px rgb(33 37 41 / 0.08);
+  --shadow-2xl: 0 32px 64px -16px rgb(33 37 41 / 0.2);
+  @keyframes liquid-drift {
+  0% {
+    background-position: 0% 0%, 100% 100%, 0% 0%;}
+  50% {
+    background-position: 30% 20%, 70% 80%, 0% 0%;}
+  100% {
+    background-position: 0% 0%, 100% 100%, 0% 0%;}}
+  --color-help-foreground: var(--help-foreground)
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/*
+ * Three colours, from design/color.png:
+ *   #212529  ink      — text, primary surfaces, selected state
+ *   #f5f6f7  ground   — the page itself
+ *   #eef0f2  nested   — a row or strip sitting inside a white card
+ *   #ffffff  surface  — cards lifted off the ground
+ *
+ * Everything else is a grey mixed from ink, or the one red kept for form
+ * validation. Do not add hues here without a reason that survives a second look.
+ */
+:root {
+  --ink: #212529;
+  --ground: #f5f6f7;
+  --surface: #ffffff;
+
+  /*
+   * Type and chips that sit on a photograph. Deliberately NOT part of the
+   * light/dark pair: a photograph looks the same in both themes, so anything
+   * drawn on top of one must not flip with the theme. `--primary-foreground`
+   * was doing that job and turns dark in dark mode, which put dark type on a
+   * dark picture.
+   */
+  --on-photo: #ffffff;
+
+  /*
+   * The ink used to darken a photograph — scrims, gradients, glass over an
+   * image. Like `--on-photo` it has no dark counterpart on purpose: using
+   * `--foreground` here meant the overlay inverted in dark mode and *lit* the
+   * picture instead of shading it.
+   */
+  --photo-ink: #10151a;
+  /*
+   * A fourth step, and the reason for it: `--ground` is the page. Anything
+   * nested inside a white card must NOT be that same value, or it reads as a
+   * hole cut through the card to the page behind. `--nested` is one step
+   * darker so it reads as a layer sitting on the card.
+   */
+  --nested: #eef0f2;
+
+  --background: var(--ground);
+  --foreground: var(--ink);
+
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+
+  --primary: var(--ink);
+  --primary-foreground: var(--surface);
+
+  --secondary: var(--nested);
+  --secondary-foreground: var(--ink);
+
+  --muted: var(--nested);
+  --muted-foreground: #6c7278;
+
+  --accent: #e5e8eb;
+  --accent-foreground: var(--ink);
+
+  /* Reserved for form validation only. Never for editorial emphasis. */
+  --destructive: #b3261e;
+
+  /* Restored with glasscn: its panes use a hairline as the chamfer edge. */
+  --border: #e4e7ea;
+  --input: #dfe2e5;
+  --ring: #c3c7cb;
+
+  --chart-1: #212529;
+  --chart-2: #4a5157;
+  --chart-3: #6c7278;
+  --chart-4: #9aa0a6;
+  --chart-5: #c3c7cb;
+
+  --radius: 1.125rem;
+
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--ink);
+  --sidebar-primary-foreground: var(--surface);
+  --sidebar-accent: var(--ground);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: #e8eaec;
+  --sidebar-ring: #c3c7cb;
+  --help-foreground: oklch(0.38 0 0);
+}
+
+/*
+ * The glass surface: used by every control that floats over a photo — the
+ * round discs, the detail pill, the cancelled plate. Defined once here so the
+ * three of them cannot drift apart.
+ */
+@utility glass {
+  background-color: color-mix(in oklch, var(--card) 11%, transparent);
+  backdrop-filter: blur(16px) saturate(120%);
+  /*
+   * The hairline that makes glass read as a pane rather than a stain. Drawn as
+   * an inset ring, not a border: `--border` is transparent everywhere by
+   * design, and a real border would also be stripped by class merging.
+   */
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--card) 12%, transparent);
+}
+
+/*
+ * The same pane, for a light ground. Over cream a sheer white is invisible, so
+ * this one carries much more of its own surface and a brighter hairline.
+ */
+@utility glass-light {
+  background-color: color-mix(in oklch, var(--card) 62%, transparent);
+  backdrop-filter: blur(16px) saturate(120%);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--card) 80%, transparent);
+}
+
+/*
+ * The wash that makes a photograph safe to write on, in either theme.
+ * 55% of a near-black swallowed the picture entirely; this is the least that
+ * still holds white type over a bright sky.
+ */
+@utility photo-scrim {
+  background-color: color-mix(in oklch, var(--photo-ink) 32%, transparent);
+}
+
+/*
+ * Glass over a photograph. Dark in both themes, because the thing behind it is
+ * a photograph in both themes — the white pane is for panels sitting on a
+ * page, not on a picture.
+ */
+@utility glass-dark {
+  background-color: color-mix(in oklch, var(--photo-ink) 45%, transparent);
+  backdrop-filter: blur(16px) saturate(120%);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, #ffffff 12%, transparent);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+/*
+ * The dark counterpart of the same three steps: ground, nested surface, card.
+ * Not a pure inversion — a black page behind a poster reads as a hole, so the
+ * ground keeps a little warmth and the card still sits a step above it.
+ */
+.dark {
+  --ink: #f1f3f5;
+  --ground: #131619;
+  --surface: #1b1f23;
+  --nested: #262b30;
+
+  --background: var(--ground);
+  --foreground: var(--ink);
+
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+
+  --primary: var(--ink);
+  --primary-foreground: #131619;
+
+  --secondary: var(--nested);
+  --secondary-foreground: var(--ink);
+
+  --muted: var(--nested);
+  --muted-foreground: #9ba1a7;
+
+  --accent: #303539;
+  --accent-foreground: var(--ink);
+
+  --destructive: #f2b8b5;
+
+  --border: #2c3135;
+  --input: #363c41;
+  --ring: #4c5359;
+
+  --chart-1: #f1f3f5;
+  --chart-2: #c3c7cb;
+  --chart-3: #9ba1a7;
+  --chart-4: #6c7278;
+  --chart-5: #4c5359;
+
+  --help-foreground: oklch(0.82 0 0);
+
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--ink);
+  --sidebar-primary-foreground: #131619;
+  --sidebar-accent: var(--nested);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: #2c3135;
+  --sidebar-ring: #4c5359;
 }

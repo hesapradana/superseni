@@ -1,0 +1,32 @@
+Foto contoh untuk pengembangan, bukan dokumentasi acara sungguhan.
+
+Sumber : Picsum Photos (https://picsum.photos) — layanan gambar placeholder
+         berbasis Unsplash, memang disediakan untuk keperluan purwarupa.
+Ukuran : 1200x675 (16:9), 9 berkas — gelombang pertama.
+         900x1200 (3:4, portrait), 10 berkas — gelombang kedua, satu per
+         acara publik yang sebelumnya tanpa gambar. Nama berkas = slug acara.
+         Diambil dengan seed tetap (picsum.photos/seed/nyeni-<slug>/900/1200)
+         sehingga bisa diunduh ulang dengan hasil yang sama.
+         Tiga di antaranya kemudian diunduh ulang dalam bentuk lain untuk
+         menguji mode Poster: jaranan-krajan-campursari dan
+         pagelaran-muntung-candiroto 1080x1080 (1:1), merti-dusun-tegalsari
+         1080x1350 (4:5). Ketiganya diberi akhiran bentuk (-1x1, -4x5):
+         berkas yang berubah bentuk harus berganti nama, karena URL yang sama
+         akan disajikan dari cache dalam bentuk lamanya.
+         karnaval-budaya-wanutengah-2x3.jpg 800x1200 (2:3) menggantikan
+         karnaval-wanutengah.jpg (16:9) untuk acara Karnaval. Alasannya
+         dihitung, bukan selera: dengan 9 dari 15 poster berbentuk 16:9,
+         dinding dua kolom tidak mungkin bebas dari bentuk sama yang
+         bertumpuk (maksimal 8). Satu poster berbeda bentuk sudah cukup.
+         karnaval-wanutengah.jpg tidak dipakai lagi.
+
+hajatan-tertutup.jpg hanya dipasang pada acara dengan visibilitas `limited`
+dan `private`. Gambar itu tidak boleh pernah tampil di halaman publik, jadi
+nama berkasnya sengaja tidak dipakai acara lain: kalau muncul di HTML,
+aturan privasinya bocor.
+
+Ganti semuanya sebelum tayang. Tidak satu pun gambar di sini berhubungan
+dengan acara, grup, atau tempat yang tercatat di data contoh.
+
+sedyo-utomo-pontong/ — poster ASLI, bukan placeholder. Ditaruh sendiri oleh
+pemilik proyek. Hanya 1.png yang terpasang di data contoh.
