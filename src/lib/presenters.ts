@@ -18,6 +18,7 @@ import {
   sourceTypeLabels,
 } from "@/lib/copy"
 import { formatDayLabel, formatFullDate, formatTimeAgo, hoursSince } from "@/lib/date"
+import { PLATFORMS, platformOf, type PlatformKey } from "@/lib/platforms"
 
 /**
  * Raw rows in, display-ready values out.
@@ -387,29 +388,76 @@ export function formatPosterUploadedAgo(poster: PosterWithDetails): string {
   return copy.poster.uploadedAgo(formatTimeAgo(poster.createdAt))
 }
 
-const PLATFORM_BY_HOST: Record<string, string> = {
-  "tiktok.com": "TikTok",
-  "instagram.com": "Instagram",
-  "facebook.com": "Facebook",
-  "fb.com": "Facebook",
-  "youtube.com": "YouTube",
-  "youtu.be": "YouTube",
-  "x.com": "X",
-  "twitter.com": "X",
+export type PosterSourceView = {
+  href: string
+  platform: PlatformKey | null
+  /** "TikTok", or the site's host when the platform is not one we know. */
+  name: string
+  /** What identifies this particular post: "@contoh.sedyoutomo" on TikTok,
+      otherwise the host and path, shortened. */
+  detail: string
 }
 
-export type PosterSourceView = { href: string; platform: string }
+function shortPath(url: URL): string {
+  const path = url.pathname.replace(/\/$/, "")
+  const shown = `${url.hostname.replace(/^www\./, "")}${path}`
+  return shown.length > 42 ? `${shown.slice(0, 41)}…` : shown
+}
 
 /**
- * The platform is read from the link rather than stored, so it can never
- * disagree with where the link actually goes. Unknown sites show their host.
+ * Every place the poster was posted. The platform is read from each link
+ * rather than stored, so a label can never disagree with where the link goes.
  */
-export function formatPosterSource(poster: PosterWithDetails): PosterSourceView | null {
-  if (!poster.sourceUrl) return null
-  const host = new URL(poster.sourceUrl).hostname.replace(/^(www\.|m\.)/, "")
-  const known = Object.entries(PLATFORM_BY_HOST).find(
-    ([domain]) => host === domain || host.endsWith(`.${domain}`)
-  )
-  return { href: poster.sourceUrl, platform: known?.[1] ?? host }
+export function formatPosterSources(poster: PosterWithDetails): PosterSourceView[] {
+  return poster.sourceUrls.map((href) => {
+    const url = new URL(href)
+    const platform = platformOf(url)
+    const handle = url.pathname.match(/^\/(@[^/]+)/)?.[1]
+    return {
+      href,
+      platform,
+      name: platform ? PLATFORMS[platform].name : url.hostname.replace(/^www\./, ""),
+      detail: handle ?? shortPath(url),
+    }
+  })
+}
+
+export type ShareTargetKey = "whatsapp" | "telegram" | "facebook" | "x" | "threads" | "sms"
+
+export type ShareTargetView = { key: ShareTargetKey; name: string; href: string }
+
+/**
+ * The share links each platform documents for the web. Instagram and TikTok
+ * have none — they only accept shares from their own apps — which is why they
+ * are missing here; the device's own share sheet ("Lainnya") covers them on a
+ * phone that has the apps installed.
+ */
+export function formatShareTargets(pageUrl: string, title: string): ShareTargetView[] {
+  const url = encodeURIComponent(pageUrl)
+  const text = encodeURIComponent(title)
+  const both = encodeURIComponent(`${title} ${pageUrl}`)
+  return [
+    { key: "whatsapp", name: PLATFORMS.whatsapp.name, href: `https://wa.me/?text=${both}` },
+    { key: "telegram", name: PLATFORMS.telegram.name, href: `https://t.me/share/url?url=${url}&text=${text}` },
+    { key: "facebook", name: PLATFORMS.facebook.name, href: `https://www.facebook.com/sharer/sharer.php?u=${url}` },
+    { key: "x", name: PLATFORMS.x.name, href: `https://x.com/intent/post?url=${url}&text=${text}` },
+    { key: "threads", name: PLATFORMS.threads.name, href: `https://www.threads.net/intent/post?text=${both}` },
+    { key: "sms", name: copy.poster.sms, href: `sms:?&body=${both}` },
+  ]
+}
+
+/** "PU" for "Pengurus Sedyo Utomo" (first and last word): the uploader's mark until accounts have photos. */
+export function formatInitials(name: string): string {
+  const letters = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word[0]!.toUpperCase())
+  return (letters.length > 1 ? letters[0]! + letters.at(-1)! : letters[0] ?? "?")
+}
+
+/** "poster-k7x2m9qa4b.png" — the extension follows the stored file. */
+export function formatPosterFileName(poster: PosterWithDetails): string {
+  const extension = poster.imageUrl.split("?")[0]!.split(".").at(-1) ?? "jpg"
+  return `poster-${poster.id}.${extension}`
 }
 

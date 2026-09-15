@@ -12,7 +12,7 @@ export default function PosterNotFound() {
           <EmptyDescription>{copy.poster.notFoundDescription}</EmptyDescription>
         </EmptyHeader>
         <Link href="/" className="text-sm underline underline-offset-4">
-          {copy.poster.back}
+          {copy.poster.toExplore}
         </Link>
       </Empty>
     </div>

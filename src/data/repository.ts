@@ -473,7 +473,7 @@ function compareExplore(a: Poster, b: Poster): number {
       if (b.startTime === null) return -1
       return a.startTime.localeCompare(b.startTime)
     }
-    return Number(b.sourceUrl !== null) - Number(a.sourceUrl !== null)
+    return Number(b.sourceUrls.length > 0) - Number(a.sourceUrls.length > 0)
   }
   if (a.performanceDate) return -1
   if (b.performanceDate) return 1
@@ -499,3 +499,23 @@ export async function getPosterById(id: string): Promise<PosterWithDetails | nul
   if (!poster || poster.status !== "published") return null
   return resolvePoster(poster)
 }
+
+/**
+ * What to show under a poster: the rest of Explore, the same group's posters
+ * first. Pinterest ranks this by similarity; with no image analysis here, the
+ * group is the one honest signal of "related".
+ */
+export async function listRelatedPosters(posterId: string): Promise<PosterWithDetails[]> {
+  await latency()
+  const current = db.posters.find((poster) => poster.id === posterId)
+  const now = new Date()
+  const others = db.posters
+    .filter((poster) => poster.id !== posterId && isOnExplore(poster, now))
+    .sort(compareExplore)
+  const sameGroup = (poster: Poster) =>
+    current?.groupId != null && poster.groupId === current.groupId
+  return [...others.filter(sameGroup), ...others.filter((poster) => !sameGroup(poster))].map(
+    resolvePoster
+  )
+}
+

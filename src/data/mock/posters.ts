@@ -45,7 +45,7 @@ export const mockPosters = [
   {
     id: "k7x2m9qa4b",
     imageUrl: "/mock/sedyo-utomo-pontong/1.png", imageAlt: "Poster Festival Petik Kopi Gemawang 2026", imageWidth: 720, imageHeight: 1280,
-    uploadedBy: SEDYO_UTOMO, sourceUrl: "https://www.tiktok.com/@contoh.sedyoutomo/video/7000000000000000001",
+    uploadedBy: SEDYO_UTOMO, sourceUrls: ["https://www.tiktok.com/@contoh.sedyoutomo/video/7000000000000000001", "https://www.instagram.com/p/CONTOHkopi01/", "https://www.facebook.com/contoh.sedyoutomo/posts/1000000000000002"],
     groupId: "grp-sedyo-utomo", performanceDate: day(1), startTime: "16:00",
     place: "Lap. Kalicebong Lempong, Kemiriombo, Gemawang", caption: "Festival Petik Kopi Gemawang 2026",
     status: "published", createdAt: daysAgo(2),
@@ -55,7 +55,7 @@ export const mockPosters = [
   {
     id: "p3n8w1zc6e",
     imageUrl: "/mock/sedyo-utomo-pontong/1.png", imageAlt: null, imageWidth: 720, imageHeight: 1280,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: null, performanceDate: null, startTime: null,
     place: null, caption: null,
     status: "published", createdAt: hoursAgo(20),
@@ -65,7 +65,7 @@ export const mockPosters = [
   {
     id: "r5t0y4ub9h",
     imageUrl: "/mock/sedyo-utomo-pontong/2.png", imageAlt: null, imageWidth: 1131, imageHeight: 1600,
-    uploadedBy: SEDYO_UTOMO, sourceUrl: "https://www.instagram.com/p/CONTOHsedyo01/",
+    uploadedBy: SEDYO_UTOMO, sourceUrls: ["https://www.instagram.com/p/CONTOHsedyo01/"],
     groupId: "grp-sedyo-utomo", performanceDate: day(6), startTime: null,
     place: "Kauman, Kemiriombo, Gemawang", caption: null,
     status: "published", createdAt: daysAgo(1),
@@ -76,7 +76,7 @@ export const mockPosters = [
   {
     id: "a1m4s8d2f6",
     imageUrl: "/mock/merti-seganen.jpg", imageAlt: "Poster Merti Dusun Seganen", imageWidth: 1200, imageHeight: 675,
-    uploadedBy: ADMIN, sourceUrl: "https://www.facebook.com/contoh.kridhomudo/posts/1000000000000001",
+    uploadedBy: ADMIN, sourceUrls: ["https://www.facebook.com/contoh.kridhomudo/posts/1000000000000001"],
     groupId: "grp-kridho-mudo", performanceDate: day(0), startTime: "20:00",
     place: "Dusun Seganen", caption: "Merti Dusun Seganen",
     status: "published", createdAt: daysAgo(4),
@@ -84,7 +84,7 @@ export const mockPosters = [
   {
     id: "b7g3h9j1k5",
     imageUrl: "/mock/pagelaran-gesing.jpg", imageAlt: null, imageWidth: 1200, imageHeight: 675,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: "grp-turonggo-seto", performanceDate: day(0), startTime: "20:30",
     place: null, caption: null,
     status: "published", createdAt: daysAgo(5),
@@ -92,7 +92,7 @@ export const mockPosters = [
   {
     id: "c2l6z0x4v8",
     imageUrl: "/mock/karnaval-budaya-wanutengah-2x3.jpg", imageAlt: "Karnaval Budaya Wanutengah", imageWidth: 800, imageHeight: 1200,
-    uploadedBy: ADMIN, sourceUrl: "https://www.instagram.com/p/CONTOHkarnaval1/",
+    uploadedBy: ADMIN, sourceUrls: ["https://www.instagram.com/p/CONTOHkarnaval1/", "https://www.tiktok.com/@contoh.langenturonggo/video/7000000000000000003"],
     groupId: "grp-langen-turonggo", performanceDate: day(0), startTime: "08:00",
     place: "Wanutengah, Parakan", caption: "Karnaval Budaya Wanutengah",
     status: "published", createdAt: daysAgo(6),
@@ -100,7 +100,7 @@ export const mockPosters = [
   {
     id: "d9b5n1m7q3",
     imageUrl: "/mock/festival-traji.jpg", imageAlt: "Poster Festival Lereng Traji", imageWidth: 1200, imageHeight: 675,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: "grp-langen-turonggo", performanceDate: day(1), startTime: "16:00",
     place: "Traji, Parakan", caption: "Festival Lereng Traji",
     status: "published", createdAt: daysAgo(3),
@@ -108,7 +108,7 @@ export const mockPosters = [
   {
     id: "e4c8r2t6y0",
     imageUrl: "/mock/danupayan.jpg", imageAlt: null, imageWidth: 1200, imageHeight: 675,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: "grp-wahyu-manunggal", performanceDate: day(1), startTime: "19:00",
     place: "Danupayan, Bulu", caption: "Pentas Tutup Tahun Danupayan",
     status: "published", createdAt: daysAgo(2),
@@ -116,7 +116,7 @@ export const mockPosters = [
   {
     id: "f0d3u7i1o5",
     imageUrl: "/mock/merti-dusun-seganen-hari-3.jpg", imageAlt: null, imageWidth: 900, imageHeight: 1200,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: "grp-panji-kusumo", performanceDate: day(2), startTime: "21:00",
     place: null, caption: null,
     status: "published", createdAt: daysAgo(3),
@@ -124,7 +124,7 @@ export const mockPosters = [
   {
     id: "g6e9p3a7s1",
     imageUrl: "/mock/jaranan-krajan-gesing.jpg", imageAlt: null, imageWidth: 900, imageHeight: 1200,
-    uploadedBy: ADMIN, sourceUrl: "https://www.tiktok.com/@contoh.turonggoseto/video/7000000000000000002",
+    uploadedBy: ADMIN, sourceUrls: ["https://www.tiktok.com/@contoh.turonggoseto/video/7000000000000000002"],
     groupId: "grp-turonggo-seto", performanceDate: day(2), startTime: "20:00",
     place: "Krajan, Gesing", caption: null,
     status: "published", createdAt: daysAgo(1),
@@ -132,7 +132,7 @@ export const mockPosters = [
   {
     id: "h1f5d9g3h7",
     imageUrl: "/mock/pagelaran-muntung-candiroto-1x1.jpg", imageAlt: null, imageWidth: 1080, imageHeight: 1080,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: "grp-tri-tunggal", performanceDate: day(3), startTime: "20:00",
     place: "Muntung, Candiroto", caption: "Pagelaran Muntung",
     status: "published", createdAt: daysAgo(4),
@@ -141,7 +141,7 @@ export const mockPosters = [
   {
     id: "i8g2j6k0l4",
     imageUrl: "/mock/pentas-sidorejo-jumo.jpg", imageAlt: null, imageWidth: 900, imageHeight: 1200,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: null, performanceDate: day(4), startTime: null,
     place: null, caption: null,
     status: "published", createdAt: daysAgo(2),
@@ -149,7 +149,7 @@ export const mockPosters = [
   {
     id: "j3h7z1x5c9",
     imageUrl: "/mock/merti-dusun-tegalsari-4x5.jpg", imageAlt: null, imageWidth: 1080, imageHeight: 1350,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: "grp-setyo-budoyo", performanceDate: day(6), startTime: "20:00",
     place: "Tegalsari", caption: "Merti Dusun Tegalsari",
     status: "published", createdAt: daysAgo(5),
@@ -157,7 +157,7 @@ export const mockPosters = [
   {
     id: "k0i4v8b2n6",
     imageUrl: "/mock/festival-sindoro.jpg", imageAlt: "Poster Festival Lereng Sindoro", imageWidth: 1200, imageHeight: 675,
-    uploadedBy: ADMIN, sourceUrl: "https://www.instagram.com/p/CONTOHsindoro1/",
+    uploadedBy: ADMIN, sourceUrls: ["https://www.instagram.com/p/CONTOHsindoro1/"],
     groupId: "grp-kridho-mudo", performanceDate: day(9), startTime: "14:00",
     place: null, caption: "Festival Lereng Sindoro",
     status: "published", createdAt: daysAgo(6),
@@ -165,7 +165,7 @@ export const mockPosters = [
   {
     id: "l5j9m3q7w1",
     imageUrl: "/mock/ketoprak-menggoro.jpg", imageAlt: null, imageWidth: 1200, imageHeight: 675,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: "grp-sekar-arum", performanceDate: day(12), startTime: "21:00",
     place: "Menggoro, Tembarak", caption: "Ketoprak Menggoro",
     status: "published", createdAt: daysAgo(3),
@@ -173,7 +173,7 @@ export const mockPosters = [
   {
     id: "m2k6e0r4t8",
     imageUrl: "/mock/wayang-jampiroso.jpg", imageAlt: null, imageWidth: 1200, imageHeight: 675,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: "grp-panji-kusumo", performanceDate: day(14), startTime: "21:00",
     place: "Jampiroso", caption: "Wayang Kulit Bersih Desa Jampiroso",
     status: "published", createdAt: daysAgo(2),
@@ -184,7 +184,7 @@ export const mockPosters = [
   {
     id: "n7l1y5u9i3",
     imageUrl: "/mock/jaranan-krajan-campursari-1x1.jpg", imageAlt: null, imageWidth: 1080, imageHeight: 1080,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: null, performanceDate: null, startTime: null,
     place: null, caption: null,
     status: "published", createdAt: daysAgo(3),
@@ -193,7 +193,7 @@ export const mockPosters = [
   {
     id: "o4m8o2p6a0",
     imageUrl: "/mock/pentas-menggoro-tembarak.jpg", imageAlt: null, imageWidth: 900, imageHeight: 1200,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: null, performanceDate: null, startTime: null,
     place: null, caption: null,
     status: "published", createdAt: daysAgo(13),
@@ -205,7 +205,7 @@ export const mockPosters = [
   {
     id: "p9n3s7d1f5",
     imageUrl: "/mock/pentas-ngasinan-kandangan.jpg", imageAlt: null, imageWidth: 900, imageHeight: 1200,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: "grp-turonggo-seto", performanceDate: day(-2), startTime: "20:00",
     place: "Ngasinan, Kandangan", caption: null,
     status: "published", createdAt: daysAgo(9),
@@ -214,7 +214,7 @@ export const mockPosters = [
   {
     id: "q6o0g4h8j2",
     imageUrl: "/mock/pentas-kedungumpul.jpg", imageAlt: null, imageWidth: 900, imageHeight: 1200,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: null, performanceDate: null, startTime: null,
     place: null, caption: null,
     status: "published", createdAt: daysAgo(15),
@@ -222,7 +222,7 @@ export const mockPosters = [
   {
     id: "r3p7k1l5z9",
     imageUrl: "/mock/merti-dusun-gondang.jpg", imageAlt: null, imageWidth: 900, imageHeight: 1200,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: "grp-mekar-budoyo", performanceDate: null, startTime: null,
     place: "Gondang", caption: "Merti Dusun Gondang",
     status: "published", createdAt: daysAgo(20),
@@ -232,7 +232,7 @@ export const mockPosters = [
   {
     id: "s0q4x8c2v6",
     imageUrl: "/mock/hajatan-tertutup.jpg", imageAlt: null, imageWidth: 1200, imageHeight: 675,
-    uploadedBy: ADMIN, sourceUrl: null,
+    uploadedBy: ADMIN, sourceUrls: [],
     groupId: "grp-ngesti-budoyo", performanceDate: day(0), startTime: null,
     place: null, caption: null,
     status: "removed", createdAt: daysAgo(1),

@@ -5,11 +5,42 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 
 import { LiquidGlass, type LiquidGlassProps } from "@/components/ui/glasscn/liquid-glass";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { type BackdropTone, useBackdropTone } from "@/hooks/use-backdrop-tone";
 import { cn } from "@/lib/utils";
 
 type PuckStyle = { left: number; width: number };
 
-type GlassToggleGroupContextValue = { registerItem: (value: string, element: HTMLButtonElement | null) => void };
+type GlassToggleGroupContextValue = {
+  registerItem: (value: string, element: HTMLButtonElement | null) => void;
+  tone: BackdropTone | null;
+};
+
+/*
+ * Local change to the glasscn original: like `GlassButton`, the switch reads
+ * the picture behind it (`useBackdropTone`) and swaps its label colours and its
+ * puck to suit — white labels over dark pictures, ink over light ones, the
+ * theme's own styling over the plain page. The original followed the theme
+ * only. Re-installing from the registry undoes this.
+ */
+const TONE_PUCK: Record<BackdropTone, string> = {
+  light: [
+    "bg-gradient-to-b from-white/50 to-white/30 dark:from-white/50 dark:to-white/30",
+    "border border-white/40 dark:border-white/40",
+    "shadow-[0_-1px_2px_rgba(255,255,255,0.8),0_1px_1px_rgba(0,0,0,0.08),0_2px_4px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,0.9),inset_0_-1px_1px_rgba(0,0,0,0.05)]",
+    "dark:shadow-[0_-1px_2px_rgba(255,255,255,0.8),0_1px_1px_rgba(0,0,0,0.08),0_2px_4px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,0.9),inset_0_-1px_1px_rgba(0,0,0,0.05)]",
+  ].join(" "),
+  dark: [
+    "bg-gradient-to-b from-white/[0.12] to-white/[0.04] dark:from-white/[0.12] dark:to-white/[0.04]",
+    "border border-white/[0.06] dark:border-white/[0.06]",
+    "shadow-[0_-1px_2px_rgba(255,255,255,0.1),0_1px_1px_rgba(0,0,0,0.2),0_2px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(0,0,0,0.25),0_8px_16px_rgba(0,0,0,0.2),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_1px_rgba(0,0,0,0.3)]",
+    "dark:shadow-[0_-1px_2px_rgba(255,255,255,0.1),0_1px_1px_rgba(0,0,0,0.2),0_2px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(0,0,0,0.25),0_8px_16px_rgba(0,0,0,0.2),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_1px_rgba(0,0,0,0.3)]",
+  ].join(" "),
+};
+
+const TONE_ITEM: Record<BackdropTone, string> = {
+  dark: "text-on-photo/65 hover:text-on-photo/90 data-checked:text-on-photo",
+  light: "text-photo-ink/60 hover:text-photo-ink/85 data-checked:text-photo-ink",
+};
 
 const GlassToggleGroupContext = createContext<GlassToggleGroupContextValue | null>(null);
 
@@ -40,6 +71,7 @@ function GlassToggleGroup({
   const containerRef = useRef<HTMLDivElement>(null);
   const puckControls = useAnimationControls();
   const isFirstRender = useRef(true);
+  const tone = useBackdropTone(containerRef);
 
   const actualValue = value ?? currentValue;
 
@@ -86,7 +118,7 @@ function GlassToggleGroup({
   }, [actualValue, puckControls]);
 
   return (
-    <GlassToggleGroupContext.Provider value={{ registerItem }}>
+    <GlassToggleGroupContext.Provider value={{ registerItem, tone }}>
       <LiquidGlass
         blur={blur}
         refraction={refraction}
@@ -107,10 +139,14 @@ function GlassToggleGroup({
               aria-hidden
               className={cn(
                 "pointer-events-none absolute top-0 h-full rounded-full",
-                "bg-gradient-to-b from-white/50 to-white/30 dark:from-white/[0.12] dark:to-white/[0.04]",
-                "border border-white/40 dark:border-white/[0.06]",
-                "shadow-[0_-1px_2px_rgba(255,255,255,0.8),0_1px_1px_rgba(0,0,0,0.08),0_2px_4px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,0.9),inset_0_-1px_1px_rgba(0,0,0,0.05)]",
-                "dark:shadow-[0_-1px_2px_rgba(255,255,255,0.1),0_1px_1px_rgba(0,0,0,0.2),0_2px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(0,0,0,0.25),0_8px_16px_rgba(0,0,0,0.2),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_1px_rgba(0,0,0,0.3)]",
+                tone
+                  ? TONE_PUCK[tone]
+                  : [
+                      "bg-gradient-to-b from-white/50 to-white/30 dark:from-white/[0.12] dark:to-white/[0.04]",
+                      "border border-white/40 dark:border-white/[0.06]",
+                      "shadow-[0_-1px_2px_rgba(255,255,255,0.8),0_1px_1px_rgba(0,0,0,0.08),0_2px_4px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,0.9),inset_0_-1px_1px_rgba(0,0,0,0.05)]",
+                      "dark:shadow-[0_-1px_2px_rgba(255,255,255,0.1),0_1px_1px_rgba(0,0,0,0.2),0_2px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(0,0,0,0.25),0_8px_16px_rgba(0,0,0,0.2),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_1px_rgba(0,0,0,0.3)]",
+                    ],
               )}
               initial={{ left: puckStyle.left, width: puckStyle.width, scaleY: 1 }}
               animate={puckControls}
@@ -157,6 +193,7 @@ function GlassToggleGroupItem({ value, children, className, "aria-label": ariaLa
         "data-checked:text-foreground",
         "focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
         className,
+        context?.tone && TONE_ITEM[context.tone],
       )}
     >
       {children}

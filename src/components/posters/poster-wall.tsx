@@ -188,7 +188,15 @@ function toColumns(posters: Poster[], count: number) {
   return walls[0].columns.map((column) => column.placed)
 }
 
-export function PosterWall({ posters }: { posters: Poster[] }) {
+export function PosterWall({
+  posters,
+  onFirstScreen = true,
+}: {
+  posters: Poster[]
+  /** False when the wall starts below the fold, as under a poster's details:
+      nothing in it is on the first screen then, so nothing loads early. */
+  onFirstScreen?: boolean
+}) {
   return (
     <div className="flex items-start gap-2 px-3">
       {toColumns(posters, 2).map((column, index) => (
@@ -197,7 +205,7 @@ export function PosterWall({ posters }: { posters: Poster[] }) {
             <PosterTile
               key={poster.id}
               poster={poster}
-              eager={top < FIRST_SCREEN}
+              eager={onFirstScreen && top < FIRST_SCREEN}
               sizes="(max-width: 768px) 50vw, 24rem"
               style={{ width: "100%", aspectRatio: ratio(poster) }}
             />

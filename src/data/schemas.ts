@@ -204,10 +204,11 @@ export const posterSchema = z.object({
   /** Shown publicly as the uploader. Kept apart from `groupId`: who uploaded is
       not the same question as whose performance it is. */
   uploadedBy: id,
-  /** Where the poster was posted (TikTok, Instagram…), so viewers can check it.
-      Optional — posters passed around on WhatsApp have no public link. The
-      platform is read from the URL, not stored. */
-  sourceUrl: z.url().nullable(),
+  /** Where the poster was posted — TikTok, Instagram, Facebook… — so viewers
+      can check it. A group often posts the same poster on several platforms,
+      so this is a list. Empty is fine: posters passed around on WhatsApp have
+      no public link. The platform is read from each URL, not stored. */
+  sourceUrls: z.array(z.url()).max(10),
   groupId: id.nullable(),
   /** When set, the poster leaves Explore once the day has passed. */
   performanceDate: z.iso.date().nullable(),

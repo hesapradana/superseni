@@ -143,6 +143,9 @@ for (const manager of groupManagers) {
 for (const poster of posters) {
   requireRef("posters.uploadedBy", poster.uploadedBy, userIds, poster.id)
   requireRef("posters.groupId", poster.groupId, groupIds, poster.id)
+  if (new Set(poster.sourceUrls).size !== poster.sourceUrls.length) {
+    problems.push(`posters.sourceUrls: "${poster.id}" lists the same link twice`)
+  }
   if (poster.startTime !== null && poster.performanceDate === null) {
     problems.push(`posters.startTime: "${poster.id}" has a time but no date`)
   }
