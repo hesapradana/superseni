@@ -4,6 +4,7 @@ import type {
   EventPerformerWithDetails,
   EventType,
   EventWithDetails,
+  PosterWithDetails,
   Region,
   RegionWithPath,
   Source,
@@ -16,7 +17,7 @@ import {
   sessionLabels,
   sourceTypeLabels,
 } from "@/lib/copy"
-import { formatDayLabel, formatTimeAgo, hoursSince } from "@/lib/date"
+import { formatDayLabel, formatFullDate, formatTimeAgo, hoursSince } from "@/lib/date"
 
 /**
  * Raw rows in, display-ready values out.
@@ -359,3 +360,56 @@ export function formatSources(sources: Source[]): SourceView[] {
     detail: joinDetails([formatTimeAgo(source.recordedAt), source.note]),
   }))
 }
+
+/* -------------------------------------------------------------------------- */
+/* Posters                                                                     */
+/* -------------------------------------------------------------------------- */
+
+/** A name for the poster when one is needed in words: the tab title, a link. */
+export function formatPosterTitle(poster: PosterWithDetails): string {
+  return poster.caption ?? poster.group?.officialName ?? copy.poster.untitled
+}
+
+export function formatPosterAlt(poster: PosterWithDetails): string {
+  if (poster.imageAlt) return poster.imageAlt
+  if (poster.caption) return poster.caption
+  if (poster.group) return copy.poster.altWithGroup(poster.group.officialName)
+  return copy.poster.untitled
+}
+
+/** "Rabu, 16 September 2026 · 16:00", or null when no date was given. */
+export function formatPosterDate(poster: PosterWithDetails): string | null {
+  if (!poster.performanceDate) return null
+  return joinLine([formatFullDate(poster.performanceDate), poster.startTime])
+}
+
+export function formatPosterUploadedAgo(poster: PosterWithDetails): string {
+  return copy.poster.uploadedAgo(formatTimeAgo(poster.createdAt))
+}
+
+const PLATFORM_BY_HOST: Record<string, string> = {
+  "tiktok.com": "TikTok",
+  "instagram.com": "Instagram",
+  "facebook.com": "Facebook",
+  "fb.com": "Facebook",
+  "youtube.com": "YouTube",
+  "youtu.be": "YouTube",
+  "x.com": "X",
+  "twitter.com": "X",
+}
+
+export type PosterSourceView = { href: string; platform: string }
+
+/**
+ * The platform is read from the link rather than stored, so it can never
+ * disagree with where the link actually goes. Unknown sites show their host.
+ */
+export function formatPosterSource(poster: PosterWithDetails): PosterSourceView | null {
+  if (!poster.sourceUrl) return null
+  const host = new URL(poster.sourceUrl).hostname.replace(/^(www\.|m\.)/, "")
+  const known = Object.entries(PLATFORM_BY_HOST).find(
+    ([domain]) => host === domain || host.endsWith(`.${domain}`)
+  )
+  return { href: poster.sourceUrl, platform: known?.[1] ?? host }
+}
+

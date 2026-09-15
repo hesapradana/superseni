@@ -1,6 +1,6 @@
 import { formatISO } from "date-fns"
 
-import { TEMANGGUNG_REGENCY_ID } from "@/data/constants"
+import { EXPLORE_UNDATED_DAYS, TEMANGGUNG_REGENCY_ID } from "@/data/constants"
 import * as db from "@/data/mock"
 import type {
   AdminEventFilter,
@@ -14,6 +14,8 @@ import type {
   Region,
   RegionLevel,
   MapDistrict,
+  Poster,
+  PosterWithDetails,
   RegionWithPath,
 } from "@/data/types"
 
@@ -426,4 +428,74 @@ export async function listAdminEvents(
     .filter((event) => matchesFilter(event, filter))
     .sort((a, b) => -compareEvents(a, b))
     .map(resolveEvent)
+}
+
+/* -------------------------------------------------------------------------- */
+/* Posters                                                                     */
+/* -------------------------------------------------------------------------- */
+
+function resolvePoster(poster: Poster): PosterWithDetails {
+  const uploader = db.users.find((user) => user.id === poster.uploadedBy)
+  if (!uploader) throw new Error(`Poster ${poster.id} has no uploader`)
+  const group = poster.groupId ? groupById.get(poster.groupId) : undefined
+
+  return {
+    ...poster,
+    uploader: { id: uploader.id, name: uploader.name },
+    group: group ? { id: group.id, officialName: group.officialName, slug: group.slug } : null,
+  }
+}
+
+/**
+ * Whether a published poster belongs on Explore right now. A dated poster
+ * stays through its performance day; an undated one for
+ * `EXPLORE_UNDATED_DAYS` after upload. Neither is deleted when it leaves.
+ */
+function isOnExplore(poster: Poster, now: Date): boolean {
+  if (poster.status !== "published") return false
+  if (poster.performanceDate !== null) return poster.performanceDate >= today()
+  const cutoff = now.getTime() - EXPLORE_UNDATED_DAYS * 24 * 60 * 60 * 1000
+  return new Date(poster.createdAt).getTime() > cutoff
+}
+
+/**
+ * Dated posters first, soonest first; a set start time before none, and a
+ * source link — something a viewer can check — before none. Undated posters
+ * follow, newest upload first.
+ */
+function compareExplore(a: Poster, b: Poster): number {
+  if (a.performanceDate && b.performanceDate) {
+    if (a.performanceDate !== b.performanceDate) {
+      return a.performanceDate.localeCompare(b.performanceDate)
+    }
+    if (a.startTime !== b.startTime) {
+      if (a.startTime === null) return 1
+      if (b.startTime === null) return -1
+      return a.startTime.localeCompare(b.startTime)
+    }
+    return Number(b.sourceUrl !== null) - Number(a.sourceUrl !== null)
+  }
+  if (a.performanceDate) return -1
+  if (b.performanceDate) return 1
+  return b.createdAt.localeCompare(a.createdAt)
+}
+
+export async function listExplorePosters(): Promise<PosterWithDetails[]> {
+  await latency()
+  const now = new Date()
+  return db.posters
+    .filter((poster) => isOnExplore(poster, now))
+    .sort(compareExplore)
+    .map(resolvePoster)
+}
+
+/**
+ * Any published poster, on Explore or not: a link shared last month must keep
+ * working. A removed poster is gone.
+ */
+export async function getPosterById(id: string): Promise<PosterWithDetails | null> {
+  await latency()
+  const poster = db.posters.find((candidate) => candidate.id === id)
+  if (!poster || poster.status !== "published") return null
+  return resolvePoster(poster)
 }

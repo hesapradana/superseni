@@ -12,6 +12,7 @@ import {
   groupManagerSchema,
   groupSchema,
   performanceArtFormSchema,
+  posterSchema,
   regionSchema,
   sourceSchema,
   userSchema,
@@ -22,6 +23,7 @@ import { mockEventTypes } from "@/data/mock/event-types"
 import { mockEvents } from "@/data/mock/events"
 import { mockGroupAliases, mockGroups } from "@/data/mock/groups"
 import { mockEventPerformers, mockPerformanceArtForms } from "@/data/mock/performances"
+import { mockPosters } from "@/data/mock/posters"
 import { mockRegions } from "@/data/mock/regions"
 import { mockSources } from "@/data/mock/sources"
 import { mockGroupManagers, mockUsers } from "@/data/mock/users"
@@ -56,6 +58,7 @@ export const performanceArtForms = parseAll("performanceArtForms", performanceAr
 export const sources = parseAll("sources", sourceSchema, mockSources)
 export const users = parseAll("users", userSchema, mockUsers)
 export const groupManagers = parseAll("groupManagers", groupManagerSchema, mockGroupManagers)
+export const posters = parseAll("posters", posterSchema, mockPosters)
 
 /* -------------------------------------------------------------------------- */
 /* Referential integrity — the checks a database would do for us               */
@@ -129,6 +132,35 @@ for (const manager of groupManagers) {
   requireRef("groupManagers.groupId", manager.groupId, groupIds, manager.userId)
 }
 
+const userById = new Map(users.map((u) => [u.id, u]))
+const managedGroupIds = new Map<string, Set<string>>()
+for (const manager of groupManagers) {
+  const set = managedGroupIds.get(manager.userId) ?? new Set<string>()
+  set.add(manager.groupId)
+  managedGroupIds.set(manager.userId, set)
+}
+
+for (const poster of posters) {
+  requireRef("posters.uploadedBy", poster.uploadedBy, userIds, poster.id)
+  requireRef("posters.groupId", poster.groupId, groupIds, poster.id)
+  if (poster.startTime !== null && poster.performanceDate === null) {
+    problems.push(`posters.startTime: "${poster.id}" has a time but no date`)
+  }
+
+  /* The temporary upload rule: admins upload for anyone, a manager only for
+     their own group. Remove this block when uploads open to everyone. */
+  const uploader = userById.get(poster.uploadedBy)
+  if (uploader && !uploader.isActive) {
+    problems.push(`posters.uploadedBy: "${poster.id}" was uploaded by inactive user "${uploader.id}"`)
+  }
+  if (uploader?.role === "group_manager") {
+    const own = managedGroupIds.get(uploader.id) ?? new Set<string>()
+    if (poster.groupId === null || !own.has(poster.groupId)) {
+      problems.push(`posters.groupId: "${poster.id}" — manager "${uploader.id}" may only upload for their own group`)
+    }
+  }
+}
+
 function requireUnique(label: string, values: readonly string[]) {
   const seen = new Set<string>()
   for (const value of values) {
@@ -141,6 +173,7 @@ requireUnique("events.slug", events.map((e) => e.slug))
 requireUnique("groups.slug", groups.map((g) => g.slug))
 requireUnique("artForms.slug", artForms.map((a) => a.slug))
 requireUnique("eventTypes.slug", eventTypes.map((t) => t.slug))
+requireUnique("posters.id", posters.map((p) => p.id))
 
 if (problems.length > 0) {
   throw new Error(`Mock data integrity check failed:\n- ${problems.join("\n- ")}`)

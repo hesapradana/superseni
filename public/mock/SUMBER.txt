@@ -29,4 +29,5 @@ Ganti semuanya sebelum tayang. Tidak satu pun gambar di sini berhubungan
 dengan acara, grup, atau tempat yang tercatat di data contoh.
 
 sedyo-utomo-pontong/ — poster ASLI, bukan placeholder. Ditaruh sendiri oleh
-pemilik proyek. Hanya 1.png yang terpasang di data contoh.
+pemilik proyek. 1.png dipakai di data acara dan dua kali di data
+poster (sengaja, contoh unggahan ganda); 2.png hanya di data poster.

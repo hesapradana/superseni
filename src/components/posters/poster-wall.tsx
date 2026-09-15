@@ -1,4 +1,5 @@
-import { PosterTile, type Poster } from "@/components/posters/poster-tile"
+import { PosterTile } from "@/components/posters/poster-tile"
+import type { PosterWithDetails as Poster } from "@/data/types"
 
 /** Same rhythm as the list: 8px between pictures, 12px from the screen edge. */
 const GAP_REM = 0.5
@@ -13,7 +14,7 @@ const GAP_REM = 0.5
 const FIRST_SCREEN = 844 / 179
 
 function ratio(poster: Poster) {
-  return poster.image.width / poster.image.height
+  return poster.imageWidth / poster.imageHeight
 }
 
 /**
@@ -109,7 +110,7 @@ function imbalance(wall: Wall) {
 function signature(wall: Wall) {
   const window = wall.queue
     .slice(0, LOOKAHEAD + 1)
-    .map((entry) => `${entry.poster.event.id}:${entry.waited}`)
+    .map((entry) => `${entry.poster.id}:${entry.waited}`)
   const heights = wall.columns.map((column) => column.height.toFixed(3))
   return `${window.join(",")}|${heights.join(",")}`
 }
@@ -194,7 +195,7 @@ export function PosterWall({ posters }: { posters: Poster[] }) {
         <div key={index} className="flex min-w-0 flex-1 flex-col gap-2">
           {column.map(({ poster, top }) => (
             <PosterTile
-              key={poster.event.id}
+              key={poster.id}
               poster={poster}
               eager={top < FIRST_SCREEN}
               sizes="(max-width: 768px) 50vw, 24rem"

@@ -4,6 +4,7 @@ import {
   DATA_STATUSES,
   EVENT_STATUSES,
   PERFORMER_ROLES,
+  POSTER_STATUSES,
   REGION_LEVELS,
   SESSIONS,
   SOURCE_TYPES,
@@ -28,6 +29,13 @@ const clockTime = z
   .string()
   .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "expected HH:mm")
 const timestamp = z.iso.datetime()
+/**
+ * Short and random, never derived from content: a poster may carry no title
+ * at all, and a URL built from one breaks the day the title is corrected.
+ * Random rather than sequential, so ids reveal neither how many posters exist
+ * nor where to find the next one.
+ */
+const posterId = z.string().regex(/^[0-9a-z]{10}$/, "poster id must be 10 characters of 0-9a-z")
 const meta = z.record(z.string(), z.unknown()).default({})
 
 /* -------------------------------------------------------------------------- */
@@ -43,6 +51,7 @@ export const eventStatusSchema = z.enum(EVENT_STATUSES)
 export const performerRoleSchema = z.enum(PERFORMER_ROLES)
 export const sourceTypeSchema = z.enum(SOURCE_TYPES)
 export const userRoleSchema = z.enum(USER_ROLES)
+export const posterStatusSchema = z.enum(POSTER_STATUSES)
 
 /* -------------------------------------------------------------------------- */
 /* Base entities — one schema per table                                        */
@@ -171,6 +180,45 @@ export const groupManagerSchema = z.object({
   groupId: id,
 })
 
+/**
+ * The app's unit: an uploaded image, like a pin on Pinterest.
+ *
+ * Only the image is required. Everything else is optional because people
+ * upload fast, and most posters already carry their details in the picture.
+ * Detail that is filled in helps a poster rank higher; it is never demanded.
+ *
+ * Duplicates are allowed. Five people uploading the same poster give five
+ * rows, and nothing tries to detect or merge them — viewers judge a poster by
+ * who uploaded it and where it came from.
+ *
+ * Deliberately separate from `events`: a poster does not have to belong to a
+ * known event, and one event may be announced by several posters.
+ */
+export const posterSchema = z.object({
+  id: posterId,
+  imageUrl: z.string().min(1),
+  imageAlt: z.string().nullable(),
+  /** Read off the file at upload; the wall lays posters out at their own shape. */
+  imageWidth: z.number().int().positive(),
+  imageHeight: z.number().int().positive(),
+  /** Shown publicly as the uploader. Kept apart from `groupId`: who uploaded is
+      not the same question as whose performance it is. */
+  uploadedBy: id,
+  /** Where the poster was posted (TikTok, Instagram…), so viewers can check it.
+      Optional — posters passed around on WhatsApp have no public link. The
+      platform is read from the URL, not stored. */
+  sourceUrl: z.url().nullable(),
+  groupId: id.nullable(),
+  /** When set, the poster leaves Explore once the day has passed. */
+  performanceDate: z.iso.date().nullable(),
+  startTime: clockTime.nullable(),
+  /** Free text, as the uploader writes it. */
+  place: z.string().min(1).nullable(),
+  caption: z.string().min(1).nullable(),
+  status: posterStatusSchema,
+  createdAt: timestamp,
+})
+
 /* -------------------------------------------------------------------------- */
 /* Read models — the shapes the repository hands to pages                      */
 /*                                                                             */
@@ -199,6 +247,17 @@ export const eventWithDetailsSchema = eventSchema.extend({
   sources: z.array(sourceSchema),
   /** Sibling dates when this event belongs to a multi-day run. */
   seriesDates: z.array(z.iso.date()),
+})
+
+/** What the public may see of an account: never its contact details. */
+export const publicUserSchema = userSchema.pick({ id: true, name: true })
+
+/** What the public may see of a group on a poster. */
+export const posterGroupSchema = groupSchema.pick({ id: true, officialName: true, slug: true })
+
+export const posterWithDetailsSchema = posterSchema.extend({
+  uploader: publicUserSchema,
+  group: posterGroupSchema.nullable(),
 })
 
 /** A district that has something coming up, ready to be placed on the map. */

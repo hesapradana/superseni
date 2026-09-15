@@ -35,3 +35,9 @@ export const SOURCE_TYPES = [
 ] as const
 
 export const USER_ROLES = ["admin", "group_manager"] as const
+
+/**
+ * A poster is either up or taken down. There is no review state: posters are
+ * not checked before they appear, only removed when someone reports them.
+ */
+export const POSTER_STATUSES = ["published", "removed"] as const

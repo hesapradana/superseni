@@ -119,6 +119,20 @@ export const copy = {
   poster: {
     emptyTitle: "Belum ada poster",
     emptyDescription: "Belum ada poster pentas yang akan datang.",
+    untitled: "Poster pentas",
+    altWithGroup: (group: string) => `Poster ${group}`,
+    back: "Kembali ke Explore",
+    uploadedByLabel: "Diunggah oleh",
+    uploadedAgo: (relative: string) => `Diunggah ${relative}`,
+    groupLabel: "Paguyuban",
+    dateLabel: "Tanggal pentas",
+    placeLabel: "Tempat",
+    captionLabel: "Keterangan",
+    sourceLabel: "Sumber",
+    openSource: (platform: string) => `Lihat di ${platform}`,
+    noSource: "Tanpa link sumber",
+    notFoundTitle: "Poster tidak ditemukan",
+    notFoundDescription: "Poster ini tidak ada atau sudah diturunkan.",
   },
 
   nav: {

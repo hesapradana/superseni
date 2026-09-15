@@ -3,30 +3,20 @@ import { connection } from "next/server"
 
 import { PosterWall } from "@/components/posters/poster-wall"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
-import { listUpcomingEvents } from "@/data/repository"
+import { listExplorePosters } from "@/data/repository"
 import { copy } from "@/lib/copy"
-import { formatEventImage, formatEventTitle } from "@/lib/presenters"
 
 /**
- * Every upcoming event, narrowed to what can be shown as a picture. No filter:
- * the Poster page has no controls to show or clear one (see `HomePage`).
- *
- * The narrowing goes through `formatEventImage`, not a check on `imageUrl`, so
- * the privacy rule comes along for free: an event that is not public has no
- * image to show, and therefore no place on this wall.
+ * Every poster that belongs on Explore right now — which ones, and in what
+ * order, is decided in the repository. No filter: the page has no controls to
+ * show or clear one (see `HomePage`).
  */
 export async function PosterSchedule() {
   /* "Upcoming" means upcoming today. Without this the page no longer reads the
      URL, so Next prerenders it at build time and the wall freezes on the
      build date — last week's events would stay up until the next deploy. */
   await connection()
-  const events = await listUpcomingEvents()
-
-  const posters = events.flatMap((event) => {
-    const title = formatEventTitle(event, event.eventType, event.region)
-    const image = formatEventImage(event, title)
-    return image ? [{ event, image }] : []
-  })
+  const posters = await listExplorePosters()
 
   if (posters.length === 0) {
     return (
