@@ -31,7 +31,7 @@ export async function generateMetadata({
   const poster = await getPosterById(id)
   if (!poster) return { title: copy.poster.notFoundTitle }
 
-  return { title: `${formatPosterTitle(poster)} · ${copy.site.shortName}` }
+  return { title: `${formatPosterTitle(poster)} · ${copy.site.name}` }
 }
 
 /**

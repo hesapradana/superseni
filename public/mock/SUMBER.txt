@@ -18,7 +18,7 @@ Ukuran : 1200x675 (16:9), 9 berkas — gelombang pertama.
          dihitung, bukan selera: dengan 9 dari 15 poster berbentuk 16:9,
          dinding dua kolom tidak mungkin bebas dari bentuk sama yang
          bertumpuk (maksimal 8). Satu poster berbeda bentuk sudah cukup.
-         karnaval-wanutengah.jpg tidak dipakai lagi.
+         karnaval-wanutengah.jpg sudah dihapus.
 
 hajatan-tertutup.jpg hanya dipasang pada acara dengan visibilitas `limited`
 dan `private`. Gambar itu tidak boleh pernah tampil di halaman publik, jadi

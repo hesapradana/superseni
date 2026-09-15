@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next"
 import { Google_Sans } from "next/font/google"
-import { NuqsAdapter } from "nuqs/adapters/next/app"
 
 import { NavigationTracker } from "@/components/layout/navigation-tracker"
 import { ThemeProvider } from "@/components/layout/theme-provider"
@@ -33,7 +32,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: copy.site.name,
-  description: copy.site.description,
+  description: copy.site.tagline,
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -47,10 +46,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <ThemeProvider>
-          <NuqsAdapter>
-            <NavigationTracker />
-            <main className="flex-1">{children}</main>
-          </NuqsAdapter>
+          <NavigationTracker />
+          <main className="flex-1">{children}</main>
         </ThemeProvider>
       </body>
     </html>

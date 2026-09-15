@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/empty"
 import { copy } from "@/lib/copy"
 
-export const metadata: Metadata = { title: copy.upload.title }
+export const metadata: Metadata = { title: `${copy.upload.title} · ${copy.site.name}` }
 
 /**
  * A place for the tab to land while uploading is not built yet. Saying so
