@@ -41,6 +41,7 @@ export type MapDistrict = z.infer<typeof s.mapDistrictSchema>
 export type PublicUser = z.infer<typeof s.publicUserSchema>
 export type PosterGroup = z.infer<typeof s.posterGroupSchema>
 export type PosterWithDetails = z.infer<typeof s.posterWithDetailsSchema>
+export type PosterUpload = z.infer<typeof s.posterUploadSchema>
 
 export type EventFilter = z.infer<typeof s.eventFilterSchema>
 export type AdminEventFilter = z.infer<typeof s.adminEventFilterSchema>

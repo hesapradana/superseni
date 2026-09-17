@@ -11,3 +11,15 @@ export const TEMANGGUNG_REGENCY_ID = "reg-temanggung"
  * data — change it freely.
  */
 export const EXPLORE_UNDATED_DAYS = 14
+
+/**
+ * Upload limits. The poster is shrunk in the browser before it is sent: the
+ * long edge is capped so text stays legible full-screen on a phone, and the
+ * file must fit under the Server Action body limit (1 MB by default in Next 16,
+ * multipart overhead included).
+ */
+export const UPLOAD_MAX_EDGE_PX = 1600
+export const UPLOAD_MAX_BYTES = 950_000
+/** Anything bigger than this is refused before the browser even decodes it. */
+export const UPLOAD_MAX_SOURCE_BYTES = 25_000_000
+export const UPLOAD_MAX_SOURCES = 10

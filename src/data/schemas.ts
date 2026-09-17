@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { UPLOAD_MAX_SOURCES } from "@/data/constants"
+
 import {
   DATA_STATUSES,
   EVENT_STATUSES,
@@ -208,14 +210,14 @@ export const posterSchema = z.object({
       can check it. A group often posts the same poster on several platforms,
       so this is a list. Empty is fine: posters passed around on WhatsApp have
       no public link. The platform is read from each URL, not stored. */
-  sourceUrls: z.array(z.url()).max(10),
+  sourceUrls: z.array(z.url({ protocol: /^https?$/ })).max(UPLOAD_MAX_SOURCES),
   groupId: id.nullable(),
   /** When set, the poster leaves Explore once the day has passed. */
   performanceDate: z.iso.date().nullable(),
   startTime: clockTime.nullable(),
   /** Free text, as the uploader writes it. */
-  place: z.string().min(1).nullable(),
-  caption: z.string().min(1).nullable(),
+  place: z.string().min(1).max(160).nullable(),
+  caption: z.string().min(1).max(300).nullable(),
   status: posterStatusSchema,
   createdAt: timestamp,
 })
@@ -249,6 +251,29 @@ export const eventWithDetailsSchema = eventSchema.extend({
   /** Sibling dates when this event belongs to a multi-day run. */
   seriesDates: z.array(z.iso.date()),
 })
+
+/**
+ * What an uploader sends besides the image. Picked from `posterSchema`, so the
+ * form, the server action and the stored row can never disagree on a rule.
+ * The image itself is checked separately: it arrives as a file, not a field.
+ */
+export const posterUploadSchema = posterSchema
+  .pick({
+    sourceUrls: true,
+    groupId: true,
+    performanceDate: true,
+    startTime: true,
+    place: true,
+    caption: true,
+  })
+  .refine((upload) => upload.startTime === null || upload.performanceDate !== null, {
+    path: ["startTime"],
+    message: "startTime needs performanceDate",
+  })
+  .refine((upload) => new Set(upload.sourceUrls).size === upload.sourceUrls.length, {
+    path: ["sourceUrls"],
+    message: "duplicate source url",
+  })
 
 /** What the public may see of an account: never its contact details. */
 export const publicUserSchema = userSchema.pick({ id: true, name: true })

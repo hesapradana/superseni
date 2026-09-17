@@ -74,3 +74,14 @@ export function hoursSince(isoTimestamp: string): number {
   const elapsed = Date.now() - parseISO(isoTimestamp).getTime()
   return Math.floor(elapsed / 3_600_000)
 }
+
+/**
+ * `YYYY-MM-DD` of the coming occurrence of a weekday (0 = Sunday), today
+ * included — "Sabtu ini" on a Saturday is today.
+ */
+export function isoComingWeekday(weekday: number): string {
+  const today = new Date()
+  const offset = (weekday - today.getDay() + 7) % 7
+  return formatISO(addDays(today, offset), { representation: "date" })
+}
+
